@@ -12,7 +12,6 @@ class Video extends Model
 
     protected $fillable = [
         'uuid',
-        'title',
         'original_filename',
         'original_path',
         'original_disk',

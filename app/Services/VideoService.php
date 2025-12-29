@@ -33,7 +33,6 @@ class VideoService implements VideoServiceInterface
         // Create video record
         $video = $this->videoRepository->create([
             'uuid' => $uuid,
-            'title' => $dto->title,
             'original_filename' => $dto->getOriginalFilename(),
             'original_path' => $storagePath,
             'original_disk' => 'local',

@@ -7,7 +7,6 @@ use Illuminate\Http\UploadedFile;
 readonly class VideoUploadDTO
 {
     public function __construct(
-        public string $title,
         public UploadedFile $file,
         public ?array $metadata = null,
     ) {}
@@ -15,7 +14,6 @@ readonly class VideoUploadDTO
     public static function fromRequest(array $data): self
     {
         return new self(
-            title: $data['title'],
             file: $data['video'],
             metadata: $data['metadata'] ?? null,
         );

@@ -16,7 +16,6 @@ class UploadVideoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
             'video' => [
                 'required',
                 'file',
@@ -31,8 +30,6 @@ class UploadVideoRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.required' => 'A title is required for the video.',
-            'title.max' => 'The title cannot exceed 255 characters.',
             'video.required' => 'Please upload a video file.',
             'video.file' => 'The uploaded file must be a valid file.',
             'video.mimetypes' => 'The video must be in one of the following formats: MP4, MPEG, MOV, AVI, MKV, or WebM.',

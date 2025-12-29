@@ -10,6 +10,8 @@ use App\Services\Contracts\VideoServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class VideoController extends Controller
 {
@@ -131,6 +133,41 @@ class VideoController extends Controller
             'success' => true,
             'message' => 'Transcoding job has been re-queued',
             'data' => new VideoResource($video->fresh()),
+        ]);
+    }
+
+    /**
+     * Serve HLS files (playlist and segments)
+     */
+    public function serveHls(string $uuid, string $filename): StreamedResponse|\Illuminate\Http\Response
+    {
+        $video = $this->videoService->getByUuid($uuid);
+
+        if (!$video) {
+            abort(404, 'Video not found');
+        }
+
+        if (!$video->hls_path) {
+            abort(404, 'HLS files not found');
+        }
+
+        $hlsDir = dirname($video->hls_path);
+        $filePath = "{$hlsDir}/{$filename}";
+
+        if (!Storage::disk('local')->exists($filePath)) {
+            abort(404, 'File not found');
+        }
+
+        // Determine MIME type based on file extension
+        $mimeType = match (strtolower(pathinfo($filename, PATHINFO_EXTENSION))) {
+            'm3u8' => 'application/vnd.apple.mpegurl',
+            'ts' => 'video/mp2t',
+            default => 'application/octet-stream',
+        };
+
+        return Storage::disk('local')->response($filePath, $filename, [
+            'Content-Type' => $mimeType,
+            'Cache-Control' => 'public, max-age=3600',
         ]);
     }
 }

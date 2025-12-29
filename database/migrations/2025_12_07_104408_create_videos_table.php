@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('videos', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->string('title');
             $table->string('original_filename');
             $table->string('original_path');
             $table->string('original_disk')->default('local');
